@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+	<link href="https://vjs.zencdn.net/7.2/video-js.min.css" rel="stylesheet">
+	<script src="https://vjs.zencdn.net/7.2/video.min.js"></script>
+
+
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">
+	<link rel="stylesheet" href="css/mis_estilos.css">
+	<title>Video.js</title>
+</head>
+
+<body>
+	<main>
+		<div class="cabecera">
+			<img src="logo.png">
+		</div>
+		<br><br><br><br>
+
+		<div class="video">
+			<video class="fm-video video-js vjs-16-9 vjs-big-play-centered" data-setup="{}" id="fm-video">
+				<source src="Segundo_concurso.mp4" type="video/mp4">
+			</video>
+			<nav class="controles">
+				<button type="button" id="reiniciar"  value="reiniciar" style="display:none"><img
+					src="restart.png" /></button>
+				<button type="button" id="play"  value="&#9658;" style="display:none" ><img
+					src="playpause.png" /></button>
+				<button type="button" id="silenciar" value="silenciar"><img
+					src="silenciar.png" /></button>
+			</nav>
+
+			<div class="menu hide">
+				<div class="menu-wrapper">
+					<div class="preguntas">
+						<label id="pregunta1" style="display:none">Pregunta</label>
+						<label id="enhorabuena" style="display:none">Enhorabuena, tu respuesta es correcta</label>
+						<label id="respuesta_incorrecta" style="display:none">Lo siento, tu respuesta no es
+							correcta</label>
+
+						<div class="options hide">
+							<ul>
+								<li><button id="r1" style="display:none" onclick="opcion1()"></button> </li>
+								<li><button id="r2" style="display:none" onclick="opcion2()"></button> </li>
+								<li><button id="r3" style="display:none" onclick="opcion3()"></button> </li>
+								<li><button id="r4" style="display:none" onclick="opcion4()"></button> </li>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="editor">
+				<form action="editor.php" method="get">
+					<label id="error" style="display:none">Error, no se ha podido guardar la pregunta</label>
+					<p id="p1">Pregunta: <input type="text" id="pregunta" size="40" required></p>
+					<p id="p2">Respuesta 1: <input type="text" id="respuesta1" name="respuesta1" size="40" required></p>
+					<p id="p3">Respuesta 2: <input type="text" id="respuesta2" name="respuesta2" size="40" required></p>
+					<p id="p4">Respuesta 3: <input type="text" id="respuesta3" name="respuesta3" size="40" required></p>
+					<p id="p5">Respuesta 4: <input type="text" id="respuesta4" name="respuesta4" size="40" required></p>
+					<p id="p6">Segundo del video (1 - 49): <input type="number" id="segundos" name="segundos" size="3"
+							required></p>
+					<p id="p7">Respuesta correcta (1 - 4):
+						<input type="number" id="correcta" name="correcta" size="3" required>
+
+					</p>
+					<p>
+						<input id="p8" type="reset" value="Enviar" onclick="guardar_respuesta()">
+						<input id="p9" type="reset" value="Borrar">
+					</p>
+				</form>
+			</div>
+			<article>
+				<h2>Interactive Video Program - Playlist</h2>
+				<br />
+				<div class="options hide">
+					<ul>
+						<li><button id="opcionConcurso1" onclick="location.href='index.html'"><img
+									src="Primer_concurso.png" /></button> </li>
+						<li><button id="opcionConcurso2" onclick="location.href='index2.html'"><img
+									src="Segundo_concurso.png" /></button> </li>
+
+					</ul>
+				</div>
+				
+			</article>
+		</div>
+
+
+	</main>
+	<script>
+
+
+
+
+		const video = document.getElementById('fm-video');
+
+		var tiempo = 9999;
+		var respuesta_correcta = 0;
+
+		video.addEventListener('timeupdate', function showButton() {
+			if (video.currentTime >= tiempo) {
+				document.getElementById('pregunta1').style.display = 'block';
+				document.getElementById('r1').style.display = 'block';
+				document.getElementById('r2').style.display = 'block';
+				document.getElementById('r3').style.display = 'block';
+				document.getElementById('r4').style.display = 'block';
+
+				video.removeEventListener('timeupdate', showButton);
+			}
+
+		});
+
+
+
+		function guardar_respuesta() {
+
+			document.getElementById('error').style.display = 'none';
+			pregunta = document.getElementById('pregunta').value;
+			respuesta1 = document.getElementById('respuesta1').value;
+			respuesta2 = document.getElementById('respuesta2').value;
+			respuesta3 = document.getElementById('respuesta3').value;
+			respuesta4 = document.getElementById('respuesta4').value;
+			segundos = document.getElementById('segundos').value;
+			correcta = document.getElementById('correcta').value;
+			respuesta_correcta = correcta;
+
+			if (segundos >= 49 || correcta > 4 || correcta <= 0 || pregunta == "" || respuesta1 == "" 
+			|| respuesta2 == "" || respuesta3 == "" || respuesta4 == "") {
+
+				document.getElementById('error').style.display = 'block';
+
+			} else {
+
+				document.getElementById('pregunta1').innerHTML = pregunta;
+				document.getElementById('r1').innerHTML = respuesta1;
+				document.getElementById('r2').innerHTML = respuesta2;
+				document.getElementById('r3').innerHTML = respuesta3;
+				document.getElementById('r4').innerHTML = respuesta4;
+				tiempo = segundos;
+				document.getElementById('play').style.display = 'inline';
+				document.getElementById('reiniciar').style.display = 'inline';
+				document.getElementById('pregunta').style.display = 'none';
+				document.getElementById('respuesta1').style.display = 'none';
+				document.getElementById('respuesta2').style.display = 'none';
+				document.getElementById('respuesta3').style.display = 'none';
+				document.getElementById('respuesta4').style.display = 'none';
+				document.getElementById('segundos').style.display = 'none';
+				document.getElementById('correcta').style.display = 'none';
+				document.getElementById('p1').style.display = 'none';
+				document.getElementById('p2').style.display = 'none';
+				document.getElementById('p3').style.display = 'none';
+				document.getElementById('p4').style.display = 'none';
+				document.getElementById('p5').style.display = 'none';
+				document.getElementById('p6').style.display = 'none';
+				document.getElementById('p7').style.display = 'none';
+				document.getElementById('p8').style.display = 'none';
+				document.getElementById('p9').style.display = 'none';
+				
+				
+
+
+				
+			}
+
+
+
+
+		}
+
+
+		function opcion1() {
+
+			var op = 1;
+
+			document.getElementById('pregunta1').style.display = 'none';
+			document.getElementById('r1').style.display = 'none';
+			document.getElementById('r2').style.display = 'none';
+			document.getElementById('r3').style.display = 'none';
+			document.getElementById('r4').style.display = 'none';
+
+			if (op == respuesta_correcta) {
+
+				document.getElementById('enhorabuena').style.display = 'block';
+
+			} else {
+				document.getElementById('respuesta_incorrecta').style.display = 'block';
+			}
+
+		}
+		function opcion2() {
+			var op = 2;
+
+			document.getElementById('pregunta1').style.display = 'none';
+			document.getElementById('r1').style.display = 'none';
+			document.getElementById('r2').style.display = 'none';
+			document.getElementById('r3').style.display = 'none';
+			document.getElementById('r4').style.display = 'none';
+
+			if (op == respuesta_correcta) {
+
+				document.getElementById('enhorabuena').style.display = 'block';
+
+			} else {
+				document.getElementById('respuesta_incorrecta').style.display = 'block';
+			}
+
+
+		}
+		function opcion3() {
+			var op = 3;
+
+			document.getElementById('pregunta1').style.display = 'none';
+			document.getElementById('r1').style.display = 'none';
+			document.getElementById('r2').style.display = 'none';
+			document.getElementById('r3').style.display = 'none';
+			document.getElementById('r4').style.display = 'none';
+			if (op == respuesta_correcta) {
+
+				document.getElementById('enhorabuena').style.display = 'block';
+
+			} else {
+				document.getElementById('respuesta_incorrecta').style.display = 'block';
+			}
+
+		}
+		function opcion4() {
+			var op = 4;
+
+			document.getElementById('pregunta1').style.display = 'none';
+			document.getElementById('r1').style.display = 'none';
+			document.getElementById('r2').style.display = 'none';
+			document.getElementById('r3').style.display = 'none';
+			document.getElementById('r4').style.display = 'none';
+			if (op == respuesta_correcta) {
+
+				document.getElementById('enhorabuena').style.display = 'block';
+
+			} else {
+				document.getElementById('respuesta_incorrecta').style.display = 'block';
+			}
+
+
+		}
+
+		function accionPlay() {
+			if (!video.paused && !video.ended) {
+				video.pause();
+				play.value = '\u25BA'; //\u25BA
+				
+			}
+			else {
+				video.play();
+				play.value = '||';
+				
+			}
+		}
+		function accionReiniciar() {
+			video.currentTime = 0;
+			video.play();
+			play.value = '||';
+		}
+	
+		function accionSilenciar() {
+
+			if (silenciar.value == 'silenciar'){
+				video.muted = true;
+				silenciar.value = 'activar';
+			} else {
+				silenciar.value = 'silenciar';
+				video.muted = false;
+			}
+			
+		}
+
+
+		function iniciar() {
+
+			medio = document.getElementById('medio');
+			play = document.getElementById('play');
+			reiniciar = document.getElementById('reiniciar');
+			silenciar = document.getElementById('silenciar');
+
+			play.addEventListener('click', accionPlay);
+			reiniciar.addEventListener('click', accionReiniciar);
+			silenciar.addEventListener('click', accionSilenciar);
+		
+		}
+
+		window.addEventListener('load', iniciar, false);
+
+
+	</script>
+</body>
+
+</html>

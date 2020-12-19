@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+	<link href="https://vjs.zencdn.net/7.2/video-js.min.css" rel="stylesheet">
+	<script src="https://vjs.zencdn.net/7.2/video.min.js"></script>
+
+
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">
+	<link rel="stylesheet" href="css/mis_estilos.css">
+	<title>Video.js</title>
+</head>
+
+<body>
+	<main>
+		<div class="cabecera">
+			<img src="logo.png">
+		</div>
+		<br><br><br><br>
+
+		<div class="video">
+			<video class="fm-video video-js vjs-16-9 vjs-big-play-centered" data-setup="{}" id="fm-video">
+				<source src="quiz.mp4" type="video/mp4">
+			</video>
+			<nav class="controles">
+				<button type="button" id="play" value="&#9658;"><img src="playpause.png" /></button>
+				<button type="button" id="silenciar" value="silenciar"><img src="silenciar.png" /></button>
+			</nav>
+
+
+			<div class="menu hide">
+				<div class="menu-wrapper">
+					<div class="preguntas">
+						<label id="pregunta1" style="display:none">¿Cuál es el lugar más frío de la tierra?</label>
+						<label id="pregunta2" style="display:none">¿Cuál es el río más largo del mundo?</label>
+						<label id="pregunta3" style="display:none">¿Dónde se originaron los Juegos Olímpicos?</label>
+						<label id="pregunta4" style="display:none">¿En qué continente está Ecuador?</label>
+
+					</div>
+					<div class="options hide">
+						<ul>
+							<li><button id="opcionAntartida" style="display:none" onclick="opcionAntartida()"><img
+										src="antartida.png" />La Antártida</button> </li>
+							<li><button id="opcionSiberia" style="display:none" onclick="opcionSiberia()"><img
+										src="siberia.png" />Siberia</button> </li>
+							<li><button id="opcionNilo" style="display:none" onclick="opcionNilo()"><img
+										src="nilo.png" />Nilo</button> </li>
+							<li><button id="opcionAmazonas" style="display:none" onclick="opcionAmazonas()"><img
+										src="amazonas.png" />Amazonas</button> </li>
+							<li><button id="opcionGrecia" style="display:none" onclick="opcionGrecia()"><img
+										src="grecia.png" />Grecia</button> </li>
+							<li><button id="opcionChina" style="display:none" onclick="opcionChina()"><img
+										src="china.png" />China</button> </li>
+							<li><button id="opcionAmerica" style="display:none" onclick="opcionAmerica()"><img
+										src="america.png" />América</button> </li>
+							<li><button id="opcionAfrica" style="display:none" onclick="opcionAfrica()"><img
+										src="africa.png" />África</button> </li>
+						</ul>
+					</div>
+
+				</div>
+			</div>
+
+			<div class="resultado">
+				<div id="resultado_jugador">
+					<a id="resultado_jugadores1" style="display:none"> Jugador 1: </a>
+					<label id="lbResultado1" style="display:none">0</label></br>
+					<a id="resultado_jugadores2" style="display:none"> Jugador 2: </a>
+					<label id="lbResultado2" style="display:none">0</label>
+				</div>
+			</div>
+
+			<div class="enhorabuena">
+				<label id="lbEnhorabuena1" style="display:none">¡EHORABUENA JUGADOR 1! <br /> Respuestas
+					acertadas:</label>
+				<label id="lbEnhorabuena2" style="display:none">¡EHORABUENA JUGADOR 2! <br /> Respuestas
+					acertadas:</label>
+				<label id="lbEnhorabuena3" style="display:none">¡EHORABUENA JUGADORES! <br /> Respuestas acertadas por
+					ambos jugadores:</label>
+				<label id="lbResultado_final" style="display:none">0</label>
+			</div>
+
+
+			<article>
+				<h2>Interactive Video Program - Playlist</h2>
+				<br />
+				<div class="options hide">
+					<ul>
+						<li><button id="opcionConcurso1" onclick="location.href='index.html'"><img
+									src="Primer_concurso.png" /></button> </li>
+						<li><button id="opcionConcurso2" onclick="location.href='index2.html'"><img
+									src="Segundo_concurso.png" /></button> </li>
+
+					</ul>
+
+				</div>
+
+			</article>
+
+
+
+			<article>
+				<h2>Inspiración para mi vídeo</h2>
+				<br />
+				<iframe width="560" height="315" src="https://www.youtube.com/embed/CXX9RukgcFY" frameborder="0"
+					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+					allowfullscreen></iframe>
+
+				<br />
+			</article>
+
+		</div>
+
+
+	</main>
+
+	<script>
+
+		const TIME_FIRST_QUESTION = 19;
+		const TIME_SECOND_QUESTION = 51;
+		const TIME_THIRD_QUESTION = 84;
+		const TIME_FOURTH_QUESTION = 112;
+		const TIME_FIRST_LOOP_START = 24;
+		const TIME_FIRST_LOOP_END = 38;
+		const TIME_SECOND_LOOP_START = 59;
+		const TIME_SECOND_LOOP_END = 71;
+		const TIME_THIRD_LOOP_START = 92;
+		const TIME_THIRD_LOOP_END = 100;
+		const TIME_FOURTH_LOOP_START = 133;
+		const TIME_FOURTH_LOOP_END = 141;
+		const FINAL = 177;
+		var inloop = 0, inloop2 = 0, inloop3 = 0, inloop4 = 0, Jugador1 = 0, Jugador2 = 0;
+
+		const video = document.getElementById('fm-video');
+
+
+		video.addEventListener('timeupdate', function showButton() {
+			if (video.currentTime >= TIME_FIRST_QUESTION) {
+
+
+				document.getElementById('pregunta1').style.display = 'block';
+				document.getElementById('opcionAntartida').style.display = 'block';
+				document.getElementById('opcionSiberia').style.display = 'block';
+				document.getElementById('resultado_jugadores1').style.display = 'block';
+				document.getElementById('resultado_jugadores2').style.display = 'block';
+				document.getElementById('lbResultado1').style.display = 'block';
+				document.getElementById('lbResultado2').style.display = 'block';
+				video.removeEventListener('timeupdate', showButton);
+			}
+		});
+		//Primera pregunta
+
+		video.addEventListener('timeupdate', function showButton() {
+			if (video.currentTime >= 44 && inloop == 1) {
+				video.currentTime = TIME_SECOND_QUESTION;
+				video.removeEventListener('timeupdate', showButton);
+			}
+		});
+		//Si se acierta la pregunta Antartida
+
+
+
+		video.addEventListener('timeupdate', function showButton() {
+			if (video.currentTime >= TIME_FIRST_LOOP_END && inloop == 0) {
+				video.currentTime = TIME_FIRST_LOOP_START;
+			}
+
+
+		}); //Bucle primera pregunta
+
+
+		video.addEventListener('timeupdate', function showButton() {
+			if (video.currentTime >= TIME_SECOND_QUESTION) {
+
+				document.getElementById('pregunta2').style.display = 'block';
+				document.getElementById('opcionNilo').style.display = 'block';
+				document.getElementById('opcionAmazonas').style.display = 'block';
+				video.removeEventListener('timeupdate', showButton);
+			}
+		});//Segunda Pregunta 
+
+
+
+
+		video.addEventListener('timeupdate', function showButton() {
+			if (video.currentTime >= 78 && inloop2 == 1) {
+				video.currentTime = TIME_THIRD_QUESTION;
+				video.removeEventListener('timeupdate', showButton);
+			}
+		});
+		//Si se acierta la pregunta Amazonas
+
+		video.addEventListener('timeupdate', function showButton() {
+			if (video.currentTime >= TIME_SECOND_LOOP_END && inloop2 == 0 && inloop != 0) {
+				video.currentTime = TIME_SECOND_LOOP_START;
+			}
+		}); //Bucle segunda pregunta
+
+
+
+		video.addEventListener('timeupdate', function showButton() {
+			if (video.currentTime >= TIME_THIRD_QUESTION) {
+
+				document.getElementById('pregunta3').style.display = 'block';
+				document.getElementById('opcionGrecia').style.display = 'block';
+				document.getElementById('opcionChina').style.display = 'block';
+				video.removeEventListener('timeupdate', showButton);
+			}
+		}); //Tercera Pregunta
+
+		video.addEventListener('timeupdate', function showButton() {
+			if (video.currentTime >= 106 && inloop3 == 1) {
+				video.currentTime = TIME_FOURTH_QUESTION;
+				video.removeEventListener('timeupdate', showButton);
+			}
+		});
+		//Si se acierta la pregunta Grecia
+
+
+		video.addEventListener('timeupdate', function showButton() {
+			if (video.currentTime >= TIME_THIRD_LOOP_END && inloop3 == 0 && inloop != 0 && inloop2 != 0) {
+				video.currentTime = TIME_THIRD_LOOP_START;
+			}
+		}); //Bucle tercera pregunta
+
+
+		video.addEventListener('timeupdate', function showButton() {
+			if (video.currentTime >= TIME_FOURTH_QUESTION) {
+
+				document.getElementById('pregunta4').style.display = 'block';
+				document.getElementById('opcionAmerica').style.display = 'block';
+				document.getElementById('opcionAfrica').style.display = 'block';
+				video.removeEventListener('timeupdate', showButton);
+			}
+
+		});//Cuarta Pregunta
+
+		video.addEventListener('timeupdate', function showButton() {
+			if (video.currentTime >= 147 && inloop4 == 1) {
+				document.getElementById('resultado_jugadores1').style.display = 'none';
+				document.getElementById('resultado_jugadores2').style.display = 'none';
+				document.getElementById('lbResultado1').style.display = 'none';
+				document.getElementById('lbResultado2').style.display = 'none';
+				if (Jugador1 < Jugador2) {
+					video.currentTime = 161;
+					document.getElementById('lbEnhorabuena2').style.display = 'block';
+					document.getElementById('lbResultado_final').innerHTML = Jugador2;
+					document.getElementById('lbResultado_final').style.display = 'block';
+				} else if (Jugador1 == Jugador2) {
+					video.currentTime = 169;
+					document.getElementById('lbEnhorabuena3').style.display = 'block';
+					document.getElementById('lbResultado_final').innerHTML = Jugador1;
+					document.getElementById('lbResultado_final').style.display = 'block';
+				} else if (Jugador1 > Jugador2) {
+					video.currentTime = 154;
+					document.getElementById('lbEnhorabuena1').style.display = 'block';
+					document.getElementById('lbResultado_final').innerHTML = Jugador1;
+					document.getElementById('lbResultado_final').style.display = 'block';
+
+				}
+				video.removeEventListener('timeupdate', showButton);
+			}
+		});
+		//Si se acierta la pregunta America
+
+		video.addEventListener('timeupdate', function showButton() {
+			if (video.currentTime >= 152 && inloop4 == 2) {
+				document.getElementById('resultado_jugadores1').style.display = 'none';
+				document.getElementById('resultado_jugadores2').style.display = 'none';
+				document.getElementById('lbResultado1').style.display = 'none';
+				document.getElementById('lbResultado2').style.display = 'none';
+				if (Jugador1 < Jugador2) {
+					video.currentTime = 161;
+					document.getElementById('lbEnhorabuena2').style.display = 'block';
+					document.getElementById('lbResultado_final').innerHTML = Jugador2;
+					document.getElementById('lbResultado_final').style.display = 'block';
+				} else if (Jugador1 == Jugador2) {
+					video.currentTime = 169;
+					document.getElementById('lbEnhorabuena3').style.display = 'block';
+					document.getElementById('lbResultado_final').innerHTML = Jugador1;
+					document.getElementById('lbResultado_final').style.display = 'block';
+				} else if (Jugador1 > Jugador2) {
+					video.currentTime = 154;
+					document.getElementById('lbEnhorabuena1').style.display = 'block';
+					document.getElementById('lbResultado_final').innerHTML = Jugador1;
+					document.getElementById('lbResultado_final').style.display = 'block';
+
+				}
+				video.removeEventListener('timeupdate', showButton);
+			}
+		});
+		//Si se equivoca en la ultima pregunta
+
+
+
+
+		video.addEventListener('timeupdate', function showButton() {
+			if (video.currentTime >= TIME_FOURTH_LOOP_END && inloop4 == 0 && inloop != 0 && inloop2 != 0 && inloop3 != 0) {
+				video.currentTime = TIME_FOURTH_LOOP_START;
+			}
+		}); //Bucle cuarta pregunta
+
+		video.addEventListener('timeupdate', function showButton() {
+			if (video.currentTime >= 160 && inloop4 != 0 && inloop != 0 && inloop2 != 0 && inloop3 != 0 && Jugador1 > Jugador2) {
+				video.currentTime = FINAL;
+				video.removeEventListener('timeupdate', showButton);
+			}
+		}); //FINAL JUGADOR 1
+
+		video.addEventListener('timeupdate', function showButton() {
+			if (video.currentTime >= 167 && inloop4 != 0 && inloop != 0 && inloop2 != 0 && inloop3 != 0 && Jugador2 > Jugador1) {
+				video.currentTime = FINAL;
+				video.removeEventListener('timeupdate', showButton);
+			}
+		}); //FINAL JUGADOR 2
+
+
+
+
+		function opcionAntartida() {
+
+			document.getElementById('pregunta1').style.display = 'none';
+			document.getElementById('opcionAntartida').style.display = 'none';
+			document.getElementById('opcionSiberia').style.display = 'none';
+			inloop = 1;
+			Jugador1 = Jugador1 + 1;
+			document.getElementById('lbResultado1').innerHTML = Jugador1;
+			video.currentTime = 40;
+
+		}
+
+		function opcionSiberia() {
+
+			document.getElementById('pregunta1').style.display = 'none';
+			document.getElementById('opcionAntartida').style.display = 'none';
+			document.getElementById('opcionSiberia').style.display = 'none';
+			inloop = 2;
+			video.currentTime = 45;
+
+		}
+		function opcionNilo() {
+
+			document.getElementById('pregunta2').style.display = 'none';
+			document.getElementById('opcionNilo').style.display = 'none';
+			document.getElementById('opcionAmazonas').style.display = 'none';
+			inloop2 = 2;
+			video.currentTime = 78;
+
+		}
+
+
+
+		function opcionAmazonas() {
+
+			document.getElementById('pregunta2').style.display = 'none';
+			document.getElementById('opcionNilo').style.display = 'none';
+			document.getElementById('opcionAmazonas').style.display = 'none';
+			inloop2 = 1;
+			Jugador2 = Jugador2 + 1;
+			document.getElementById('lbResultado2').innerHTML = Jugador2;
+			video.currentTime = 73;
+
+		}
+
+		function opcionGrecia() {
+
+			document.getElementById('pregunta3').style.display = 'none';
+			document.getElementById('opcionGrecia').style.display = 'none';
+			document.getElementById('opcionChina').style.display = 'none';
+			inloop3 = 1;
+			Jugador1 = Jugador1 + 1;
+			document.getElementById('lbResultado1').innerHTML = Jugador1;
+			video.currentTime = 101;
+
+		}
+
+		function opcionChina() {
+
+			document.getElementById('pregunta3').style.display = 'none';
+			document.getElementById('opcionGrecia').style.display = 'none';
+			document.getElementById('opcionChina').style.display = 'none';
+			inloop3 = 2;
+			video.currentTime = 106;
+
+		}
+
+		function opcionAmerica() {
+
+			document.getElementById('pregunta4').style.display = 'none';
+			document.getElementById('opcionAmerica').style.display = 'none';
+			document.getElementById('opcionAfrica').style.display = 'none';
+			inloop4 = 1;
+			Jugador2 = Jugador2 + 1;
+			document.getElementById('lbResultado2').innerHTML = Jugador2;
+			video.currentTime = 143;
+
+		}
+
+		function opcionAfrica() {
+
+			document.getElementById('pregunta4').style.display = 'none';
+			document.getElementById('opcionAmerica').style.display = 'none';
+			document.getElementById('opcionAfrica').style.display = 'none';
+			inloop4 = 2;
+			video.currentTime = 147;
+
+		}
+
+		function accionPlay() {
+			if (!video.paused && !video.ended) {
+				video.pause();
+				play.value = '\u25BA'; //\u25BA
+
+			}
+			else {
+				video.play();
+				play.value = '||';
+
+			}
+		}
+
+		function accionSilenciar() {
+
+			if (silenciar.value == 'silenciar') {
+				video.muted = true;
+				silenciar.value = 'activar';
+			} else {
+				silenciar.value = 'silenciar';
+				video.muted = false;
+			}
+
+		}
+
+
+		function iniciar() {
+
+			medio = document.getElementById('medio');
+			play = document.getElementById('play');
+			silenciar = document.getElementById('silenciar');
+
+			play.addEventListener('click', accionPlay);
+			silenciar.addEventListener('click', accionSilenciar);
+
+		}
+
+		window.addEventListener('load', iniciar, false);
+
+
+	</script>
+</body>
+
+</html>
